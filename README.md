@@ -5,6 +5,7 @@ English follows Japanese.
 ## 日本語
 
 Form Mirror Proは、スポーツやスキルの練習を効率化するために設計された高機能なWebアプリケーションです。お手本となる動画と自分のカメラ映像を重ねたり並べたりすることで、動きの細かな違いを分析し、上達をサポートします。
+ダンス、ゴルフ、テニス、ヨガ、そしてあらゆるスポーツのフォームを完璧に！
 
 ### 🌟 主な機能
 - **シンクロ表示**: お手本動画とカメラ映像を「左右」や「重ね表示（ゴースト）」に切り替えて表示。
@@ -27,6 +28,7 @@ Form Mirror Proは、スポーツやスキルの練習を効率化するため�
 ## English
 
 Form Mirror Pro is a high-performance web-based application designed for sports or skill practice. It allows you to overlay your own camera feed with a reference video, making it easier to analyze and improve your movements.
+Perfect your form for dance, golf, tennis, yoga, and all types of sports!
 
 ### 🌟 Key Features
 - **Synchronized Display**: View the reference video and your camera side-by-side or overlaid (Ghost mode).
