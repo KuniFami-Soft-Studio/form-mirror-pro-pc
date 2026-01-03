@@ -23,6 +23,25 @@ Form Mirror Proは、スポーツやスキルの練習を効率化するため�
 4. 画面下のパネルで、レイアウトや速度、反転などを自由に設定します。
 5. 「録画開始」または「待機戻り」を押して、練習をスタートしてください！
 
+## 📺 機能デモ動画 / Video Demos
+
+それぞれの画像をクリックするとYouTubeショートで操作感を確認できます。  
+*Click the images below to watch functional demos on YouTube Shorts.*
+
+| 1. 実行の簡易フロー | 2. グリッド線の活用 | 3. オーバーレイ(Ghost)機能 |
+| :---: | :---: | :---: |
+| [![Flow Demo](https://img.youtube.com/vi/-jd5w2OXmbI/0.jpg)](https://youtube.com/shorts/-jd5w2OXmbI) | [![Grid Demo](https://img.youtube.com/vi/GL8-mmvqPtk/0.jpg)](https://youtube.com/shorts/GL8-mmvqPtk) | [![Overlay Demo](https://img.youtube.com/vi/PiVElqdY6n8/0.jpg)](https://youtube.com/shorts/PiVElqdY6n8) |
+| **録画から比較までの流れ**<br>Simple recording flow | **姿勢を正す補助線**<br>Using grid lines | **お手本との重ね合わせ**<br>Ghost overlay feature |
+
+---
+
+### 🔍 デモの詳細内容
+
+* **【実行の簡易フロー】**: お手本動画の読み込みから、カウントダウン、実際の比較録画までのスムーズな一連の操作を紹介しています。
+* **【グリッド線についての説明】**: **# Grid** ボタンで切り替えられる多種多様なガイド線（3x3〜16x16、センターライン）を使って、フォームのズレをミリ単位で分析する方法です。
+* **【オーバーレイ (Ghost)】**: **👻スライダー**を使い、自分とお手本を半透明で重ね合わせることで、シルエットのわずかな違いを直感的に把握する様子を確認できます。
+
+
 ---
 
 ## English
