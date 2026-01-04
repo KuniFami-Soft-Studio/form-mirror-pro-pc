@@ -73,4 +73,4 @@ Perfect your form for dance, golf, tennis, yoga, and all types of sports!
 ---
 
 ## 📄 License
-Copyright (c) 2026 Form Mirror Pro Project.
+Copyright (c) 2026 Kunifami
