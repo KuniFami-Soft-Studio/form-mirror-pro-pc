@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Form Mirror Pro for PC ver 1.1</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5115190227060860" crossorigin="anonymous"></script>
+    <style>
+        body { margin: 0; background: #000; color: white; font-family: sans-serif; overflow: hidden; touch-action: manipulation; }
+        canvas { width: 100vw; height: 100vh; object-fit: contain; background: #111; display: block; cursor: pointer; }
+        .fade-ui { transition: opacity 0.5s ease, visibility 0.5s; opacity: 0; visibility: hidden; }
+        .ui-visible { opacity: 1; visibility: visible; }
+        
+        #countdownOverlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 150px; font-weight: bold; color: #ffcc00; z-index: 5000;
+            text-shadow: 0 0 30px rgba(0,0,0,1); pointer-events: none; display: none;
+        }
+
+        /* UIパネル設定 */
+        .ui-top { position: fixed; top: 10px; width: 100%; display: flex; justify-content: center; gap: 10px; z-index: 100; flex-wrap: wrap; }
+        .ui-bottom { 
+            position: fixed; bottom: 15px; width: 94%; left: 3%;
+            display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 100; 
+            background: rgba(0,0,0,0.8); padding: 12px 0; border-radius: 20px; backdrop-filter: blur(10px);
+        }
+        
+        .mirror-panel { background: rgba(50, 50, 50, 0.8); padding: 6px 12px; border-radius: 12px; display: flex; gap: 6px; font-size: 11px; border: 1px solid #444; align-items: center; flex-wrap: wrap; justify-content: center; }
+        #seekBar { width: 90%; height: 25px; accent-color: #007AFF; cursor: pointer; }
+        button { padding: 8px 14px; border-radius: 10px; border: none; font-weight: bold; background: #444; color: white; cursor: pointer; font-size: 12px; white-space: nowrap; }
+        
+        #recordBtn { background: #ff3b30; min-width: 90px; }
+        #recordBtn.is-recording { background: #fff !important; color: #ff3b30; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .active-btn { background: #007AFF !important; }
+        .mirror-active { background: #34c759 !important; }
+
+        /* 第一画面 */
+        #loginOverlay {
+            position: fixed; inset: 0; background: #000; z-index: 9000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
+        }
+        .intro-box { max-width: 600px; line-height: 1.6; margin-bottom: 10px; }
+        .donation-links { display: flex; gap: 15px; margin: 15px 0; position: relative; z-index: 9005; }
+        .donation-links a { padding: 12px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; color: white; background: #333; border: 1px solid #555; transition: 0.3s; display: inline-block; }
+        .btn-proceed { background:#007AFF; font-size:20px; width:200px; padding:18px; margin: 10px; border: none; border-radius: 15px; color: white; cursor: pointer; position: relative; z-index: 9010; }
+
+        /* 広告専用スペース：ボタンと干渉しないよう高さを確保 */
+        .ad-container { width: 100%; max-width: 728px; min-height: 100px; margin: 10px auto; overflow: hidden; }
+
+        #saveContainer { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: #1c1c1e; padding: 20px; border-radius: 25px; z-index: 9500; width: 85%; max-width: 500px; text-align: center; border: 1px solid #444;
+        }
+        #previewVid { width: 100%; border-radius: 15px; background: #000; margin-bottom: 15px; max-height: 50vh; }
+        input[type="range"].small-slider { width: 45px; height: 15px; vertical-align: middle; accent-color: #007AFF; }
+    </style>
+</head>
+<body>
+
+    <div id="countdownOverlay"></div>
+
+    <div id="loginOverlay">
+        <h1 style="margin-bottom: 15px; color: #007AFF;">Form Mirror Pro for PC ver 1.1</h1>
+        <div class="intro-box">
+            <p style="font-size: 16px; margin: 0 0 10px 0; white-space: pre-wrap; color: #ddd;">こんにちは！便利なツールを開発しているクリエイターです。このアプリがあなたのスポーツやスキルの練習の役に立てば嬉しいです！応援よろしくお願いします！</p>
+            <p style="font-size: 14px; margin: 0; white-space: pre-wrap; color: #aaa;">Hi! I'm a creator. I hope this app helps your practice. Thank you for your support!</p>
+        </div>
+
+        <div class="ad-container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5115190227060860"
+                 data-ad-slot="YOUR_AD_SLOT_HERE"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+
+        <div class="donation-links">
+            <a href="https://github.com/KuniFami-Soft-Studio/form-mirror-pro-pc/wiki/Form-Mirror-Pro-for-PC-%E2%80%90-User-Manual" target="_blank" style="background: #28a745; border-color: #28a745;">📖 Manual</a>
+            <a href="https://kunifami-soft-studio.github.io/form-mirror-pro-iphone/" target="_blank" style="background: #5856d6; border-color: #5856d6;">💻 iPhone版</a>
+            <a href="https://ofuse.me/dfee538b" target="_blank">🇯🇵 OFUSEで応援</a>
+            <a href="https://buymeacoffee.com/kunifami20w" target="_blank">🌎 Buy Me a Coffee</a>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+            <button class="btn-proceed" onclick="initAppWithLang('ja')">開始 (JP)</button>
+            <button class="btn-proceed" onclick="initAppWithLang('en')" style="background: #5856d6;">Start (EN)</button>
+        </div>
+    </div>
+
+    <div id="topPanel" class="ui-top fade-ui">
+        <input type="file" id="fileInput" accept="video/*" onchange="loadVideo(event)" style="width:105px;">
+        <button id="btnLayout" onclick="switchLayout()">📺 表示切替</button>
+        <button onclick="switchCamera()" id="btnSwitchCamera" style="background:#28a745;">🔄 カメラ切替</button>
+        <button id="recordBtn" onclick="handleRecordClick()">録画開始</button>
+    </div>
+
+    <div id="bottomPanel" class="ui-bottom fade-ui">
+        <div class="mirror-panel">
+            <button onclick="toggleMirror('model')" id="mirrorModelBtn" class="mirror-active">🪞見本反転</button>
+            <button onclick="toggleFitMode()" id="fitModeBtn"> [ ] 拡大切替</button>
+            <button onclick="toggleMirror('me')" id="mirrorMeBtn" class="mirror-active">🤳自分反転</button>
+            <button onclick="cycleGrid()" id="gridBtn"># Grid: Off</button>
+            <button onclick="changeSpeed()" id="btnSpeed">x1.0</button>
+            <button id="qualityBtn" onclick="cycleQuality()">💎 Mid</button>
+            <button id="delayBtn" style="background: #5856d6;" onclick="cycleDelay()">⏱ 0s</button>
+            <div style="background:#333; padding:2px 6px; border-radius:8px;">
+                ⏳ <button onclick="setCD(3)" id="cd3" class="active-btn" style="padding:2px 4px;">3s</button>
+                <button onclick="setCD(5)" id="cd5" style="padding:2px 4px;">5s</button>
+                <button onclick="setCD(7)" id="cd7" style="padding:2px 4px;">7s</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:2px;">
+                <span>💡</span><input type="range" id="brightnessRange" class="small-slider" min="100" max="400" value="100">
+                <span>👻</span><input type="range" id="ghostRange" class="small-slider" min="0" max="100" value="0">
+            </div>
+        </div>
+        
+        <div id="timeDisplay" style="font-size: 11px; color: #aaa;">0s / 0s</div>
+        <input type="range" id="seekBar" value="0" step="0.1">
+        
+        <div style="display:flex; gap:6px;">
+            <button id="btnReset" onclick="startCountdown('reset')" style="background:#5856d6;">🔄 待機戻り</button>
+            <button onclick="modelVid.currentTime -= 5">⏪ 5s</button>
+            <button id="playPauseBtn" onclick="togglePlay()">▶️ 再生</button>
+            <button onclick="modelVid.currentTime += 5">5s ⏩</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+            <button onclick="setPoint('A')" id="btnA">📍 A: --</button>
+            <button onclick="setPoint('B')" id="btnB">📍 B: --</button>
+            <button onclick="toggleLoop()" id="btnLoop">🔁 Loop OFF</button>
+        </div>
+    </div>
+
+    <div id="saveContainer">
+        <h3 id="saveTitle" style="margin-top:0;">録画完了</h3>
+        <video id="previewVid" playsinline controls></video>
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeSaveUI()" id="btnCloseSave" style="background:#555; flex:1;">閉じる</button>
+            <button onclick="downloadVideo()" id="btnDownload" style="background:#007AFF; flex:2;">保存する</button>
+        </div>
+    </div>
+
+    <canvas id="mainCanvas" onclick="handleCanvasClick()"></canvas>
+    <video id="modelVideo" loop playsinline style="display:none;"></video>
+    <video id="myCamera" autoplay muted playsinline style="display:none;"></video>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const modelVid = document.getElementById('modelVideo');
+        const myCam = document.getElementById('myCamera');
+        const seekBar = document.getElementById('seekBar');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const brightnessRange = document.getElementById('brightnessRange');
+        const ghostRange = document.getElementById('ghostRange');
+        const cdOverlay = document.getElementById('countdownOverlay');
+        
+        let displayMode = 0, mediaRecorder = null, recordedChunks = [];
+        let pointA = 0, pointB = 0, isLooping = false, lastBlob = null;
+        let speeds = [1.0, 0.75, 0.5, 1.25, 1.5], speedIdx = 0;
+        let delayTimes = [0, 3, 4, 5], delayIdx = 0;
+        let cameraBuffer = [];
+        const BUFFER_FPS = 30;
+
+        let countdownSec = 3, isCountingDown = false;
+        let mirrorModel = true, mirrorMe = true, fitMode = "contain";
+        let gridMode = 0; 
+        let uiTimer = null, currentLang = 'ja', appReady = false;
+        let audioCtx, destination, source;
+        let videoDevices = [], currentDeviceIdx = 0;
+
+        const i18n = {
+            ja: {
+                layout: ["📺 表示: 左右", "📺 表示: 見本のみ", "📺 表示: 自分のみ"],
+                gridLabels: ["# Grid: Off", "# Grid: 3x3", "# Grid: 4x4", "# Grid: 8x8", "# Grid: 16x16", "# Grid: Center"],
+                record: "録画開始", recordStop: "停止",
+                play: "▶️ 再生", pause: "⏸ 停止",
+                loopOn: "🔁 Loop ON", loopOff: "🔁 Loop OFF",
+                mirrorModel: "🪞見本反転", mirrorMe: "🤳自分反転", switchCam: "🔄 カメラ切替",
+                fitMode: " [ ] 拡大切替", reset: "🔄 待機戻り",
+                saveTitle: "録画完了", btnClose: "閉じる", btnSave: "保存する"
+            },
+            en: {
+                layout: ["📺 Layout: Side", "📺 Layout: Model", "📺 Layout: Camera"],
+                gridLabels: ["# Grid: Off", "# Grid: 3x3", "# Grid: 4x4", "# Grid: 8x8", "# Grid: 16x16", "# Grid: Center"],
+                record: "Record", recordStop: "Stop",
+                play: "▶️ Play", pause: "⏸ Pause",
+                loopOn: "🔁 Loop ON", loopOff: "🔁 Loop OFF",
+                mirrorModel: "🪞Mirror Model", mirrorMe: "🤳Mirror Me", switchCam: "🔄 Switch Cam",
+                fitMode: " [ ] Fit Toggle", reset: "🔄 Back to Start",
+                saveTitle: "Record Finished", btnClose: "Close", btnSave: "Save Video"
+            }
+        };
+
+        const qualities = [{ label: 'Low', bps: 1500000 }, { label: 'Mid', bps: 4000000 }, { label: 'High', bps: 9000000 }];
+        let qualityIdx = 1;
+        canvas.width = 1280; canvas.height = 720;
+
+        async function initAppWithLang(lang) {
+            currentLang = lang;
+            document.getElementById('loginOverlay').style.display = 'none';
+            applyLanguage();
+            
+            try {
+                const initialStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                initialStream.getTracks().forEach(track => track.stop());
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                videoDevices = devices.filter(device => device.kind === 'videoinput');
+                await startCamera();
+
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioCtxClass();
+                destination = audioCtx.createMediaStreamDestination();
+                source = audioCtx.createMediaElementSource(modelVid);
+                source.connect(audioCtx.destination);
+                source.connect(destination);
+                appReady = true;
+                showUI(); render();
+            } catch (e) { alert("Camera Error: " + e.message); }
+        }
+
+        async function startCamera() {
+            if (myCam.srcObject) myCam.srcObject.getTracks().forEach(track => track.stop());
+            const device = videoDevices[currentDeviceIdx];
+            if (!device) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: device.deviceId }, width: 1280, height: 720 } });
+                myCam.srcObject = stream;
+                cameraBuffer = [];
+                await myCam.play();
+            } catch (e) {
+                myCam.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+            }
+        }
+
+        async function switchCamera() {
+            if (videoDevices.length > 1) {
+                currentDeviceIdx = (currentDeviceIdx + 1) % videoDevices.length;
+                await startCamera();
+            }
+            resetUITimer();
+        }
+
+        function applyLanguage() {
+            const t = i18n[currentLang];
+            document.getElementById('btnLayout').innerText = t.layout[displayMode];
+            document.getElementById('gridBtn').innerText = t.gridLabels[gridMode];
+            document.getElementById('recordBtn').innerText = mediaRecorder && mediaRecorder.state === "recording" ? t.recordStop : t.record;
+            document.getElementById('playPauseBtn').innerText = modelVid.paused ? t.play : t.pause;
+            document.getElementById('btnLoop').innerText = isLooping ? t.loopOn : t.loopOff;
+            document.getElementById('mirrorModelBtn').innerText = t.mirrorModel;
+            document.getElementById('mirrorMeBtn').innerText = t.mirrorMe;
+            document.getElementById('btnSwitchCamera').innerText = t.switchCam;
+            document.getElementById('fitModeBtn').innerText = t.fitMode;
+            document.getElementById('btnReset').innerText = t.reset;
+            document.getElementById('saveTitle').innerText = t.saveTitle;
+            document.getElementById('btnCloseSave').innerText = t.btnClose;
+            document.getElementById('btnDownload').innerText = t.btnSave;
+        }
+
+        function render() {
+            if (!appReady) return;
+            ctx.fillStyle = "#111"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (myCam.readyState >= 2) {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = myCam.videoWidth; tempCanvas.height = myCam.videoHeight;
+                tempCanvas.getContext('2d').drawImage(myCam, 0, 0);
+                cameraBuffer.push(tempCanvas);
+                if (cameraBuffer.length > BUFFER_FPS * 6) cameraBuffer.shift();
+            }
+            const br = brightnessRange.value;
+            const ghost = ghostRange.value / 100;
+            const bufferIdx = Math.max(0, cameraBuffer.length - 1 - (delayTimes[delayIdx] * BUFFER_FPS));
+            const currentCamFrame = cameraBuffer[bufferIdx] || myCam;
+
+            if (displayMode === 0) {
+                drawClipped(modelVid, 0, 0, 640, 720, mirrorModel, 100, 1);
+                drawClipped(currentCamFrame, 640, 0, 640, 720, mirrorMe, br, 1);
+                if (ghost > 0) drawClipped(modelVid, 640, 0, 640, 720, mirrorModel, 100, ghost);
+            } else if (displayMode === 1) drawClipped(modelVid, 0, 0, 1280, 720, mirrorModel, 100, 1);
+            else if (displayMode === 2) {
+                drawClipped(currentCamFrame, 0, 0, 1280, 720, mirrorMe, br, 1);
+                if (ghost > 0) drawClipped(modelVid, 0, 0, 1280, 720, mirrorModel, 100, ghost);
+            }
+            if (gridMode > 0) drawGrids();
+            requestAnimationFrame(render);
+        }
+
+        function drawClipped(v, x, y, w, h, mirror, br, alpha) {
+            const isVideo = v instanceof HTMLVideoElement;
+            if (isVideo && v.readyState < 2) return;
+            ctx.save();
+            ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+            ctx.globalAlpha = alpha;
+            ctx.filter = `brightness(${br}%)`;
+            ctx.translate(x + w / 2, y + h / 2);
+            if (mirror) ctx.scale(-1, 1);
+            const vWidth = isVideo ? v.videoWidth : v.width;
+            const vHeight = isVideo ? v.videoHeight : v.height;
+            const ratio = fitMode === "cover" ? Math.max(w/vWidth, h/vHeight) : Math.min(w/vWidth, h/vHeight);
+            ctx.drawImage(v, -vWidth*ratio/2, -vHeight*ratio/2, vWidth*ratio, vHeight*ratio);
+            ctx.restore();
+        }
+
+        function drawGrids() {
+            ctx.save(); ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 1;
+            let div = [0, 3, 4, 8, 16, 0][gridMode];
+            if (div > 0) {
+                for(let i=1; i<div; i++){
+                    ctx.beginPath(); ctx.moveTo(canvas.width*(i/div), 0); ctx.lineTo(canvas.width*(i/div), canvas.height); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(0, canvas.height*(i/div)); ctx.lineTo(canvas.width, canvas.height*(i/div)); ctx.stroke();
+                }
+            } else if (gridMode === 5) {
+                ctx.strokeStyle = "rgba(255,204,0,0.6)";
+                ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function cycleGrid() { gridMode = (gridMode + 1) % 6; applyLanguage(); resetUITimer(); }
+        function cycleDelay() { delayIdx = (delayIdx + 1) % delayTimes.length; document.getElementById('delayBtn').innerText = `⏱ ${delayTimes[delayIdx]}s`; resetUITimer(); }
+        function handleRecordClick() { if (mediaRecorder && mediaRecorder.state === "recording") stopRecording(); else startCountdown('record'); }
+        function startCountdown(type) {
+            isCountingDown = true; hideUI();
+            let count = countdownSec;
+            cdOverlay.style.display = 'block'; cdOverlay.innerText = count;
+            modelVid.pause();
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) cdOverlay.innerText = count;
+                else {
+                    clearInterval(timer); cdOverlay.style.display = 'none'; isCountingDown = false;
+                    if (type === 'record') executeRecording();
+                    else { modelVid.currentTime = pointA; modelVid.play(); applyLanguage(); }
+                }
+            }, 1000);
+        }
+        function executeRecording() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            recordedChunks = [];
+            const stream = canvas.captureStream(30);
+            const combined = new MediaStream([...stream.getVideoTracks(), ...destination.stream.getAudioTracks()]);
+            let mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm;codecs=vp9';
+            mediaRecorder = new MediaRecorder(combined, { mimeType: mimeType, videoBitsPerSecond: qualities[qualityIdx].bps });
+            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+            mediaRecorder.onstop = () => {
+                lastBlob = new Blob(recordedChunks, { type: mimeType });
+                document.getElementById('previewVid').src = URL.createObjectURL(lastBlob);
+                document.getElementById('saveContainer').style.display = 'block';
+            };
+            mediaRecorder.start();
+            recordBtn.innerText = i18n[currentLang].recordStop; recordBtn.classList.add('is-recording');
+            modelVid.currentTime = pointA; modelVid.play();
+            applyLanguage();
+        }
+        function stopRecording() { if (mediaRecorder) mediaRecorder.stop(); modelVid.pause(); recordBtn.innerText = i18n[currentLang].record; recordBtn.classList.remove('is-recording'); showUI(); applyLanguage(); }
+        function downloadVideo() { if (!lastBlob) return; const a = document.createElement('a'); a.href = URL.createObjectURL(lastBlob); a.download = `form_${Date.now()}.mp4`; a.click(); }
+        function switchLayout() { displayMode = (displayMode + 1) % 3; applyLanguage(); resetUITimer(); }
+        function toggleFitMode() { fitMode = (fitMode === "contain") ? "cover" : "contain"; document.getElementById('fitModeBtn').classList.toggle('active-btn', fitMode === "cover"); resetUITimer(); }
+        function toggleLoop() { isLooping = !isLooping; applyLanguage(); document.getElementById('btnLoop').classList.toggle('active-btn', isLooping); resetUITimer(); }
+        function togglePlay() { if (modelVid.paused) modelVid.play(); else modelVid.pause(); applyLanguage(); showUI(); }
+        function loadVideo(e) { const f = e.target.files[0]; if(f) { modelVid.src = URL.createObjectURL(f); modelVid.onloadedmetadata = () => { seekBar.max = modelVid.duration; pointA = 0; pointB = modelVid.duration; updateTime(); }; } resetUITimer(); }
+        function setCD(s) { countdownSec = s; [3, 5, 7].forEach(v => document.getElementById(`cd${v}`).classList.toggle('active-btn', v === s)); resetUITimer(); }
+        function cycleQuality() { qualityIdx = (qualityIdx + 1) % 3; document.getElementById('qualityBtn').innerText = `💎 ${qualities[qualityIdx].label}`; resetUITimer(); }
+        function setPoint(p) { if (p === 'A') { pointA = modelVid.currentTime; document.getElementById('btnA').innerText = `📍 A: ${Math.floor(pointA)}s`; } else { pointB = modelVid.currentTime; document.getElementById('btnB').innerText = `📍 B: ${Math.floor(pointB)}s`; } resetUITimer(); }
+        function changeSpeed() { speedIdx = (speedIdx + 1) % speeds.length; modelVid.playbackRate = speeds[speedIdx]; document.getElementById('btnSpeed').innerText = `x${speeds[speedIdx].toFixed(2)}`; resetUITimer(); }
+        function toggleMirror(t) { if(t === 'model') { mirrorModel = !mirrorModel; document.getElementById('mirrorModelBtn').classList.toggle('mirror-active', mirrorModel); } else { mirrorMe = !mirrorMe; document.getElementById('mirrorMeBtn').classList.toggle('mirror-active', mirrorMe); } resetUITimer(); }
+        function updateTime() { timeDisplay.innerText = `${Math.floor(modelVid.currentTime)}s / ${Math.floor(modelVid.duration || 0)}s`; }
+        function showUI() { document.querySelectorAll('.fade-ui').forEach(u => u.classList.add('ui-visible')); resetUITimer(); }
+        function hideUI() { document.querySelectorAll('.fade-ui').forEach(u => u.classList.remove('ui-visible')); if (uiTimer) clearTimeout(uiTimer); }
+        function resetUITimer() { if (uiTimer) clearTimeout(uiTimer); uiTimer = setTimeout(() => { if (!modelVid.paused || (mediaRecorder && mediaRecorder.state === "recording")) hideUI(); }, 3000); }
+        function handleCanvasClick() { if (document.getElementById('topPanel').classList.contains('ui-visible')) hideUI(); else showUI(); }
+        function closeSaveUI() { document.getElementById('saveContainer').style.display = 'none'; showUI(); }
+        seekBar.oninput = () => { modelVid.currentTime = seekBar.value; updateTime(); resetUITimer(); };
+        modelVid.ontimeupdate = () => { if (isLooping && modelVid.currentTime >= pointB) modelVid.currentTime = pointA; if (!seekBar.matches(':active')) seekBar.value = modelVid.currentTime; updateTime(); };
+    </script>
+    
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</body>
+</html>
