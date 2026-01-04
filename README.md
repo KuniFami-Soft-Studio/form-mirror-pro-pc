@@ -1,4 +1,4 @@
-# Form Mirror Pro for PC ver 1.0
+# Form Mirror Pro for PC ver 1.1
 
 English follows Japanese.
 
