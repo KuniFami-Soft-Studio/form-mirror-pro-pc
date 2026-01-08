@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1V1ELMWFTY"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1V1ELMWFTY"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -26,7 +25,6 @@
             text-shadow: 0 0 30px rgba(0,0,0,1); pointer-events: none; display: none;
         }
 
-        /* UIパネル設定 */
         .ui-top { position: fixed; top: 10px; width: 100%; display: flex; justify-content: center; gap: 10px; z-index: 100; flex-wrap: wrap; }
         .ui-bottom { 
             position: fixed; bottom: 15px; width: 94%; left: 3%;
@@ -53,9 +51,20 @@
         .intro-box { max-width: 600px; line-height: 1.6; margin-bottom: 10px; }
         .donation-links { display: flex; gap: 15px; margin: 15px 0; position: relative; z-index: 9005; }
         .donation-links a { padding: 12px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; color: white; background: #333; border: 1px solid #555; transition: 0.3s; display: inline-block; }
-        .btn-proceed { background:#007AFF; font-size:20px; width:200px; padding:18px; margin: 10px; border: none; border-radius: 15px; color: white; cursor: pointer; position: relative; z-index: 9010; }
+        
+        /* 開始ボタンの設定を強化 */
+        .btn-proceed { 
+            background:#007AFF; font-size:20px; width:200px; padding:18px; margin: 10px; border: none; border-radius: 15px; color: white; 
+            cursor: pointer; position: relative; z-index: 9500; /* 最前面に */
+        }
 
-        /* 広告専用スペース：ボタンと干渉しないよう高さを確保 */
+        .btn-home { 
+            background: #444; font-size: 16px; width: 220px; padding: 12px; margin-top: 15px; border: 1px solid #666; border-radius: 12px; 
+            color: white; text-decoration: none; font-weight: bold; display: inline-block; transition: 0.3s;
+            position: relative; z-index: 9500;
+        }
+        .btn-home:hover { background: #666; }
+
         .ad-container { width: 100%; max-width: 728px; min-height: 100px; margin: 10px auto; overflow: hidden; }
 
         #saveContainer { 
@@ -93,11 +102,13 @@
             <a href="https://buymeacoffee.com/kunifami20w" target="_blank">🌎 Buy Me a Coffee</a>
         </div>
         
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
-            <button class="btn-proceed" onclick="initAppWithLang('ja')">開始 (JP)</button>
-            <button class="btn-proceed" onclick="initAppWithLang('en')" style="background: #5856d6;">Start (EN)</button>
+        <div style="position: relative; z-index: 9500; display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-proceed" onclick="initAppWithLang('ja')">開始 (JP)</button>
+                <button class="btn-proceed" onclick="initAppWithLang('en')" style="background: #5856d6;">Start (EN)</button>
+            </div>
+            <a href="https://kunifami-soft-studio.github.io/" class="btn-home">🏠 ホームに戻る / Home</a>
         </div>
-        
     </div>
 
     <div id="topPanel" class="ui-top fade-ui">
