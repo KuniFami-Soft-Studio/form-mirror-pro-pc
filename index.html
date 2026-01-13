@@ -149,7 +149,7 @@
         <div class="sliders-row">
             <div class="slider-group"><span>👻</span><input type="range" id="ghostRange" min="0" max="100" value="0"></div>
             <div class="slider-group"><span>💡</span><input type="range" id="brightnessRange" min="100" max="400" value="100"></div>
-            <div class="slider-group"><span>🔍</span><input type="range" id="zoomRange" min="1" max="5" step="0.1" value="1" oninput="handleHardwareZoom(this.value)"></div>
+            <div class="slider-group"><span>🔍</span><input type="range" id="zoomRange" min="1" max="5" step="0.1" value="1" oninput="handleZoomSlider(this.value)"></div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
@@ -288,6 +288,8 @@
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             const target = getTargetTransform(e.clientX);
             target.scale = Math.min(Math.max(0.1, target.scale * delta), 10);
+            // スライダーにも値を同期（自分の画面の場合のみ）
+            if(target === transformMe) document.getElementById('zoomRange').value = target.scale;
         }, { passive: false });
 
         async function initAppWithLang(lang) {
@@ -309,8 +311,12 @@
             updateQualityLabel();
 
             try {
+                // まず一度許可を得る
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                // その後デバイス一覧を取得
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 videoDevices = devices.filter(d => d.kind === 'videoinput');
+                
                 await startCamera();
                 showUI();
                 requestAnimationFrame(render);
@@ -330,37 +336,39 @@
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             myCam.srcObject = stream;
             cameraBuffer = [];
-            // カメラのメタデータ読み込み後に再生開始
             myCam.onloadedmetadata = () => myCam.play();
         }
 
         async function switchCamera() {
+            if (videoDevices.length <= 1) return;
             currentDeviceIdx = (currentDeviceIdx + 1) % videoDevices.length;
             await startCamera();
         }
 
-        async function handleHardwareZoom(val) {
-            const track = myCam.srcObject?.getVideoTracks()[0];
-            if (!track) return;
-            const caps = track.getCapabilities();
-            if (caps.zoom) {
-                try { await track.applyConstraints({ advanced: [{ zoom: val }] }); } catch (e) { console.warn("Hardware zoom error"); }
-            }
+        function handleZoomSlider(val) {
+            // ハードウェアズームではなく、描画トランスフォームのスケールを操作する
+            transformMe.scale = parseFloat(val);
         }
 
         function render() {
             ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // カメラフレームをバッファに保存（遅延用）
             if (myCam.readyState >= 2) {
                 const temp = document.createElement('canvas');
                 temp.width = myCam.videoWidth; temp.height = myCam.videoHeight;
                 temp.getContext('2d').drawImage(myCam, 0, 0);
                 cameraBuffer.push(temp);
-                if (cameraBuffer.length > 60 * 10) cameraBuffer.shift(); // 最大10秒保持
+                // 最大遅延時間(7秒) + 余裕を持たせたフレーム数を維持
+                if (cameraBuffer.length > 60 * 8) cameraBuffer.shift(); 
             }
 
+            // 遅延フレームの計算（1秒=60fps想定）
             const delayFrames = Math.floor(delayTimes[delayIdx] * 60);
-            const camFrame = cameraBuffer[Math.max(0, cameraBuffer.length - 1 - delayFrames)] || myCam;
+            const camFrame = cameraBuffer.length > delayFrames 
+                             ? cameraBuffer[cameraBuffer.length - 1 - delayFrames] 
+                             : (cameraBuffer[0] || myCam);
+
             const br = document.getElementById('brightnessRange').value;
             const ghost = document.getElementById('ghostRange').value / 100;
 
