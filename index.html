@@ -10,7 +10,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Form Mirror Pro for PC ver 1.2.2</title>
+    <title>Form Mirror Pro for PC ver 1.2.3</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5115190227060860" crossorigin="anonymous"></script>
     <style>
         :root {
@@ -88,7 +88,7 @@
 
         #countdownOverlay {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 150px; font-weight: bold; color: #ffcc00; z-index: 5000; pointer-events: none; display: none;
+            font-size: 150px; font-weight: bold; color: #ffcc00; z-index: 5000; pointer-events: none; display: none; text-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         #saveContainer { 
@@ -103,7 +103,7 @@
     <div id="countdownOverlay"></div>
 
     <div id="loginOverlay">
-        <h1 style="margin-bottom: 15px; color: var(--primary);">Form Mirror Pro for PC ver 1.2</h1>
+        <h1 style="margin-bottom: 15px; color: var(--primary);">Form Mirror Pro for PC ver 1.2.3</h1>
         <div class="intro-box">
             <p style="font-size: 16px; margin: 0 0 10px 0; white-space: pre-wrap; color: #ddd;">こんにちは！便利なツールを開発しているクリエイターです。このアプリがあなたのスポーツやスキルの練習の役に立てば嬉しいです！応援よろしくお願いします！</p>
             <p style="font-size: 14px; margin: 0; white-space: pre-wrap; color: #aaa;">Hi! I'm a creator. I hope this app helps your practice. Thank you for your support!</p>
@@ -218,7 +218,6 @@
         let videoDevices = [], currentDeviceIdx = 0;
         let currentLang = 'ja';
 
-        // 画質設定
         const qualityModes = [
             { label: 'Low', bps: 1500000 },
             { label: 'Standard', bps: 5000000 },
@@ -253,7 +252,6 @@
             return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
         }
 
-        // 座標からターゲットを選択する関数
         function getTargetTransform(clientX) {
             if (displayMode === 0) {
                 return clientX < window.innerWidth / 2 ? transformModel : transformMe;
@@ -264,7 +262,6 @@
             }
         }
 
-        // --- マウス操作イベント ---
         canvas.addEventListener('mousedown', (e) => {
             isDragging = true;
             lastMouseX = e.clientX;
@@ -276,22 +273,15 @@
             if (!isDragging || !activeTransform) return;
             const dx = (e.clientX - lastMouseX);
             const dy = (e.clientY - lastMouseY);
-            
-            // キャンバスとウィンドウの比率を考慮
             const scaleX = canvas.width / window.innerWidth;
             const scaleY = canvas.height / window.innerHeight;
-
             activeTransform.x += (dx * scaleX) / activeTransform.scale;
             activeTransform.y += (dy * scaleY) / activeTransform.scale;
-            
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
         });
 
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-            activeTransform = null;
-        });
+        window.addEventListener('mouseup', () => { isDragging = false; activeTransform = null; });
 
         canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -300,7 +290,6 @@
             target.scale = Math.min(Math.max(0.1, target.scale * delta), 10);
         }, { passive: false });
 
-        // --- アプリ初期化 ---
         async function initAppWithLang(lang) {
             currentLang = lang;
             document.getElementById('loginOverlay').style.display = 'none';
@@ -324,21 +313,25 @@
                 videoDevices = devices.filter(d => d.kind === 'videoinput');
                 await startCamera();
                 showUI();
-                render();
+                requestAnimationFrame(render);
             } catch (e) { alert("Camera Error: " + e.message); }
         }
 
         async function startCamera() {
-            if (myCam.srcObject) myCam.srcObject.getTracks().forEach(t => t.stop());
+            if (myCam.srcObject) {
+                myCam.srcObject.getTracks().forEach(t => t.stop());
+            }
             const constraints = { 
                 video: { 
-                    deviceId: videoDevices[currentDeviceIdx]?.deviceId,
-                    width: 1280, height: 720 
+                    deviceId: videoDevices[currentDeviceIdx]?.deviceId ? { exact: videoDevices[currentDeviceIdx].deviceId } : undefined,
+                    width: { ideal: 1280 }, height: { ideal: 720 }
                 } 
             };
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             myCam.srcObject = stream;
             cameraBuffer = [];
+            // カメラのメタデータ読み込み後に再生開始
+            myCam.onloadedmetadata = () => myCam.play();
         }
 
         async function switchCamera() {
@@ -355,7 +348,6 @@
             }
         }
 
-        // --- 描画エンジン ---
         function render() {
             ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -364,10 +356,10 @@
                 temp.width = myCam.videoWidth; temp.height = myCam.videoHeight;
                 temp.getContext('2d').drawImage(myCam, 0, 0);
                 cameraBuffer.push(temp);
-                if (cameraBuffer.length > 60 * 8) cameraBuffer.shift();
+                if (cameraBuffer.length > 60 * 10) cameraBuffer.shift(); // 最大10秒保持
             }
 
-            const delayFrames = delayTimes[delayIdx] * 60;
+            const delayFrames = Math.floor(delayTimes[delayIdx] * 60);
             const camFrame = cameraBuffer[Math.max(0, cameraBuffer.length - 1 - delayFrames)] || myCam;
             const br = document.getElementById('brightnessRange').value;
             const ghost = document.getElementById('ghostRange').value / 100;
@@ -388,9 +380,10 @@
         }
 
         function draw(v, x, y, w, h, mirror, br, alpha, trans) {
-            // video要素ならreadyState、canvas要素（遅延バッファ）ならwidthをチェック
-            const ready = (v instanceof HTMLVideoElement) ? v.readyState >= 2 : (v instanceof HTMLCanvasElement);
-            if (!ready) return;
+            const isCanvas = v instanceof HTMLCanvasElement;
+            const isVideo = v instanceof HTMLVideoElement;
+            if (isVideo && v.readyState < 2) return;
+            if (isCanvas && !v.width) return;
 
             ctx.save();
             ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
@@ -401,9 +394,8 @@
             ctx.translate(trans.x, trans.y);
             if (mirror) ctx.scale(-1, 1);
 
-            // videoWidth（video）または width（canvas）を取得
-            const vw = v.videoWidth || v.width;
-            const vh = v.videoHeight || v.height;
+            const vw = isVideo ? v.videoWidth : v.width;
+            const vh = isVideo ? v.videoHeight : v.height;
             if (!vw || !vh) { ctx.restore(); return; }
 
             const ratio = fitMode === "cover" ? Math.max(w/vw, h/vh) : Math.min(w/vw, h/vh);
@@ -428,7 +420,6 @@
             ctx.restore();
         }
 
-        // --- 各種操作 ---
         function switchLayout() { displayMode = (displayMode + 1) % 3; resetUITimer(); }
         function toggleMirror(target) {
             if(target === 'model') mirrorModel = !mirrorModel;
@@ -438,24 +429,15 @@
             resetUITimer();
         }
         function cycleGrid() { gridMode = (gridMode + 1) % 7; resetUITimer(); }
-        function cycleDelay() { 
-            delayIdx = (delayIdx + 1) % delayTimes.length; 
-            updateDelayLabel();
-        }
+        function cycleDelay() { delayIdx = (delayIdx + 1) % delayTimes.length; updateDelayLabel(); }
         function updateDelayLabel() {
             const timeStr = formatTime(delayTimes[delayIdx]);
-            const label = i18n[currentLang].delay;
-            document.getElementById('delayBtn').innerText = `⏱ ${timeStr} ${label}`;
+            document.getElementById('delayBtn').innerText = `⏱ ${timeStr} ${i18n[currentLang].delay}`;
         }
-        function cycleQuality() {
-            qualityIdx = (qualityIdx + 1) % qualityModes.length;
-            updateQualityLabel();
-            resetUITimer();
-        }
+        function cycleQuality() { qualityIdx = (qualityIdx + 1) % qualityModes.length; updateQualityLabel(); resetUITimer(); }
         function updateQualityLabel() {
             const q = qualityModes[qualityIdx];
-            const label = i18n[currentLang].quality;
-            document.getElementById('qualityBtn').innerText = `🎬 ${label}: ${q.label}`;
+            document.getElementById('qualityBtn').innerText = `🎬 ${i18n[currentLang].quality}: ${q.label}`;
             document.getElementById('qualityBtn').classList.toggle('active-btn', q.label === 'High');
         }
         function toggleFitMode() { fitMode = (fitMode === "contain" ? "cover" : "contain"); resetUITimer(); }
@@ -509,16 +491,13 @@
                 modelVid.play(); 
                 playPauseBtn.innerText = "⏸";
             } catch (err) {
-                console.error("Recording start failed:", err);
-                alert("録画の開始に失敗しました。");
+                alert("録画開始エラー: " + err.message);
                 showUI();
             }
         }
 
         function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== "inactive") {
-                mediaRecorder.stop();
-            }
+            if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
             modelVid.pause();
             playPauseBtn.innerText = "▶";
             recordBtn.innerText = i18n[currentLang].recStart; recordBtn.classList.remove('is-recording');
@@ -555,7 +534,7 @@
 
         function toggleLoop() { isLooping = !isLooping; document.getElementById('btnLoop').classList.toggle('active-btn', isLooping); }
         function showUI() { document.querySelectorAll('.fade-ui').forEach(u => u.classList.add('ui-visible')); resetUITimer(); }
-        function hideUI() { if(!modelVid.paused) document.querySelectorAll('.fade-ui').forEach(u => u.classList.remove('ui-visible')); }
+        function hideUI() { if(!modelVid.paused || isCountingDown) document.querySelectorAll('.fade-ui').forEach(u => u.classList.remove('ui-visible')); }
         function resetUITimer() { if (uiTimer) clearTimeout(uiTimer); uiTimer = setTimeout(hideUI, 4000); }
         canvas.addEventListener('click', () => showUI());
 
@@ -563,8 +542,7 @@
         function downloadVideo() {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(lastBlob);
-            const ext = lastBlob.type.includes('mp4') ? 'mp4' : 'webm';
-            a.download = `form_check_${Date.now()}.${ext}`;
+            a.download = `form_check_${Date.now()}.webm`;
             a.click();
         }
 
