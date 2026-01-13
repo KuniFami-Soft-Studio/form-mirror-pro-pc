@@ -121,7 +121,7 @@
 
         <div class="donation-links">
             <a href="https://github.com/KuniFami-Soft-Studio/form-mirror-pro-pc/wiki/Form-Mirror-Pro-for-PC-%E2%80%90-User-Manual" target="_blank" style="background: #28a745; border-color: #28a745;">📖 Manual</a>
-            <a href="https://kunifami-soft-studio.com/form-mirror-pro-iphone/" target="_blank" style="background: #5856d6; border-color: #5856d6;">💻 iPhone版</a>
+            <a href="https://kunifami-soft-studio.github.io/form-mirror-pro-iphone/" target="_blank" style="background: #5856d6; border-color: #5856d6;">💻 iPhone版</a>
             <a href="https://ofuse.me/dfee538b" target="_blank">🇯🇵 OFUSEで応援</a>
             <a href="https://buymeacoffee.com/kunifami20w" target="_blank">🌎 Buy Me a Coffee</a>
         </div>
@@ -131,7 +131,7 @@
                 <button class="btn-proceed" onclick="initAppWithLang('ja')">開始 (JP)</button>
                 <button class="btn-proceed" onclick="initAppWithLang('en')" style="background: #5856d6;">Start (EN)</button>
             </div>
-            <a href="https://kunifami-soft-studio.com/" class="btn-home">🏠 ホームに戻る / Home</a>
+            <a href="https://kunifami-soft-studio.github.io/" class="btn-home">🏠 ホームに戻る / Home</a>
         </div>
     </div>
 
@@ -388,7 +388,10 @@
         }
 
         function draw(v, x, y, w, h, mirror, br, alpha, trans) {
-            if (v instanceof HTMLVideoElement && v.readyState < 2) return;
+            // video要素ならreadyState、canvas要素（遅延バッファ）ならwidthをチェック
+            const ready = (v instanceof HTMLVideoElement) ? v.readyState >= 2 : (v instanceof HTMLCanvasElement);
+            if (!ready) return;
+
             ctx.save();
             ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
             ctx.globalAlpha = alpha;
@@ -397,8 +400,12 @@
             ctx.scale(trans.scale, trans.scale);
             ctx.translate(trans.x, trans.y);
             if (mirror) ctx.scale(-1, 1);
+
+            // videoWidth（video）または width（canvas）を取得
             const vw = v.videoWidth || v.width;
             const vh = v.videoHeight || v.height;
+            if (!vw || !vh) { ctx.restore(); return; }
+
             const ratio = fitMode === "cover" ? Math.max(w/vw, h/vh) : Math.min(w/vw, h/vh);
             ctx.drawImage(v, -vw*ratio/2, -vh*ratio/2, vw*ratio, vh*ratio);
             ctx.restore();
