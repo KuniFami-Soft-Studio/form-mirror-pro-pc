@@ -8,10 +8,21 @@
     gtag('js', new Date());
     gtag('config', 'G-1V1ELMWFTY');
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Form Mirror Pro for PC ver 1.2.3</title>
+    
+    <title>Form Mirror Pro for PC - Real-time Form Check & Coaching Tool</title>
+    <meta name="description" content="PCのカメラを使って自分のフォームと見本動画をリアルタイムで比較・録画できるツールです。スポーツ、ダンス、楽器の練習に最適。 Compare your form with model videos in real-time using your PC camera. Perfect for sports, dance, and skill practice.">
+    <meta name="keywords" content="フォームチェック, ダンス練習, スポーツ練習, 録画比較, Form Check, Coaching Tool, Mirroring">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Form Mirror Pro for PC">
+    <meta property="og:description" content="見本と自分を並べて比較。スポーツやダンスのフォームを劇的に改善。">
+    <meta property="og:type" content="website">
+
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5115190227060860" crossorigin="anonymous"></script>
+    
     <style>
         :root {
             --primary: #0A84FF;
@@ -183,6 +194,7 @@
             <button id="btnSpeed" onclick="changeSpeed()">⚡ x1.0</button>
             <button id="delayBtn" onclick="cycleDelay()">⏱ 00:00 遅延</button>
             <button id="qualityBtn" onclick="cycleQuality()">🎬 画質: Standard</button>
+            <button id="qualityBtn" onclick="cycleQuality()">🎬 画質: Standard</button>
             <button id="fitModeBtn" onclick="toggleFitMode()">↔ Fit Mode</button>
             <button id="btnA" onclick="setPoint('A')">📍 A: --:--</button>
             <button id="btnB" onclick="setPoint('B')">📍 B: --:--</button>
@@ -295,7 +307,6 @@
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             const target = getTargetTransform(e.clientX);
             target.scale = Math.min(Math.max(0.1, target.scale * delta), 10);
-            // スライダーにも値を同期（自分の画面の場合のみ）
             if(target === transformMe) document.getElementById('zoomRange').value = target.scale;
         }, { passive: false });
 
@@ -318,9 +329,7 @@
             updateQualityLabel();
 
             try {
-                // まず一度許可を得る
                 await navigator.mediaDevices.getUserMedia({ video: true });
-                // その後デバイス一覧を取得
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 videoDevices = devices.filter(d => d.kind === 'videoinput');
                 
@@ -353,24 +362,20 @@
         }
 
         function handleZoomSlider(val) {
-            // ハードウェアズームではなく、描画トランスフォームのスケールを操作する
             transformMe.scale = parseFloat(val);
         }
 
         function render() {
             ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // カメラフレームをバッファに保存（遅延用）
             if (myCam.readyState >= 2) {
                 const temp = document.createElement('canvas');
                 temp.width = myCam.videoWidth; temp.height = myCam.videoHeight;
                 temp.getContext('2d').drawImage(myCam, 0, 0);
                 cameraBuffer.push(temp);
-                // 最大遅延時間(7秒) + 余裕を持たせたフレーム数を維持
                 if (cameraBuffer.length > 60 * 8) cameraBuffer.shift(); 
             }
 
-            // 遅延フレームの計算（1秒=60fps想定）
             const delayFrames = Math.floor(delayTimes[delayIdx] * 60);
             const camFrame = cameraBuffer.length > delayFrames 
                              ? cameraBuffer[cameraBuffer.length - 1 - delayFrames] 
