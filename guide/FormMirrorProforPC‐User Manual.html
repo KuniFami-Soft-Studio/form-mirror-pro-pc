@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1V1ELMWFTY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-1V1ELMWFTY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Form Mirror Pro for PC v1.1 - Official Manual / 操作マニュアル</title>
+    <meta name="description" content="[JP] PC版 Form Mirror Pro の詳細操作マニュアル。左右並列比較、録画、遅延表示、ゴースト重ね合わせ機能などの全機能を詳しく解説。[EN] Comprehensive operation manual for Form Mirror Pro for PC. Detailed guide for all features including side-by-side comparison, recording, delay, and ghost overlay.">
+    <meta name="keywords" content="Form Mirror Pro, 操作マニュアル, フォーム比較, ゴルフ, ダンス, 筋トレ, 録画, 知育, 集中マスター, Manual, Form Check, Side-by-side, Recording, Ghost Mode">
+    <meta name="author" content="KuniFami Soft Studio">
+    
+    <meta property="og:title" content="Form Mirror Pro for PC - Official Operation Manual">
+    <meta property="og:description" content="お手本と自分を並べて比較・録画。上達を加速させる全機能の使い方をマスターしましょう。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://kunifami-soft-studio.com/guide-pc.html">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5115190227060860" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #FF9500;
+            --bg: #fdfdfd;
+            --card-bg: #ffffff;
+            --border: #e1e8ed;
+            --text-main: #333333;
+            --text-sub: #666666;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+            line-height: 1.7; color: var(--text-main); background: var(--bg); margin: 0; padding: 0;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Header Section */
+        header { 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-bottom: 5px solid var(--accent);
+            margin-bottom: 40px;
+        }
+        h1 { font-size: 2rem; color: var(--primary); margin: 0; line-height: 1.3; }
+        .intro { margin-top: 15px; font-size: 1.1rem; border-top: 1px solid #eee; padding-top: 15px; }
+
+        /* Navigation Links */
+        .top-nav { margin-bottom: 20px; font-size: 0.9rem; }
+        .top-nav a { color: var(--accent); text-decoration: none; font-weight: bold; }
+
+        /* Section Styling */
+        h2 { 
+            font-size: 1.6rem; color: var(--primary); border-left: 6px solid var(--accent); 
+            padding: 5px 15px; margin: 50px 0 25px; background: #fff9f0;
+        }
+        h3 { 
+            font-size: 1.2rem; color: #444; margin: 30px 0 15px; 
+            display: flex; align-items: center; gap: 10px;
+        }
+        h3::before { content: "●"; color: var(--accent); font-size: 0.8rem; }
+
+        /* Feature Card */
+        .feature-card { 
+            background: var(--card-bg); padding: 25px; border-radius: 12px; 
+            border: 1px solid var(--border); margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .feature-item { margin-bottom: 20px; }
+        .feature-item:last-child { margin-bottom: 0; }
+        .label { 
+            font-weight: bold; color: white; background: var(--accent); 
+            padding: 2px 10px; border-radius: 4px; display: inline-block; margin-bottom: 5px;
+        }
+        .feature-desc { font-weight: bold; display: block; margin-top: 5px; }
+        .en-text { display: block; font-size: 0.85rem; color: var(--text-sub); font-style: italic; margin-top: 2px; }
+
+        /* Tips and Important */
+        .important-box { 
+            background: #fff4e5; border: 2px solid #ffa726; padding: 20px; 
+            border-radius: 10px; margin: 30px 0;
+        }
+        .important-box strong { color: #e65100; font-size: 1.1rem; display: block; margin-bottom: 10px; }
+
+        /* Footer */
+        footer { 
+            text-align: center; margin-top: 80px; padding: 40px 0; 
+            border-top: 1px solid #eee; color: var(--text-sub); 
+        }
+        .footer-links { margin-bottom: 20px; }
+        .footer-links a { color: var(--text-sub); text-decoration: none; margin: 0 15px; font-size: 0.9rem; }
+        .footer-links a:hover { color: var(--accent); }
+
+        hr { border: 0; border-top: 1px solid #eee; margin: 40px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav class="top-nav">
+        <a href="../index.html">← Back to Home / ホームへ戻る</a>
+    </nav>
+
+    <header>
+        <h1>Form Mirror Pro for PC ver 1.1<br>Operation Manual / 操作マニュアル</h1>
+        <div class="intro">
+            PCの大画面でお手本動画と自分のフォームを並べて<strong>比較・録画</strong>するためのツールです。<br>
+            <span class="en-text">A professional tool for PC to compare and record your form side-by-side with a reference video on a large screen.</span>
+        </div>
+    </header>
+
+    <div style="margin: 30px 0; text-align: center;">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-5115190227060860"
+             data-ad-slot="3577508619"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <main>
+        <h2>🛠 Top Panel / 上部パネル</h2>
+        <div class="feature-card">
+            <div class="feature-item">
+                <span class="label">Choose File</span>
+                <span class="feature-desc">【ファイルを選択】お手本となる動画をPCから読み込みます。</span>
+                <span class="en-text">Load a reference video from your computer to use as a model.</span>
+            </div>
+            <hr>
+            <div class="feature-item">
+                <span class="label">Layout</span>
+                <span class="feature-desc">【📺 表示切替】画面レイアウトを3パターンから切り替えます。</span>
+                <p>左右並列 / 見本のみ / 自分のみ を状況に合わせて選択可能です。<br>
+                <span class="en-text">Switches between 3 layouts: Side-by-side, Model only, or Camera only.</span></p>
+            </div>
+            <hr>
+            <div class="feature-item">
+                <span class="label">Switch Cam</span>
+                <span class="feature-desc">【🔄 カメラ切替】接続されている複数のカメラを切り替えます。</span>
+                <p>外部Webカメラや内蔵カメラなど、最適なアングルを選択してください。<br>
+                <span class="en-text">Switches between multiple connected cameras (e.g., External USB cam and Built-in cam).</span></p>
+            </div>
+            <hr>
+            <div class="feature-item">
+                <span class="label">Record</span>
+                <span class="feature-desc">【録画開始】録画を開始します。</span>
+                <p>後述する「Countdown」で設定した準備時間の後に、自動的にキャプチャが始まります。<br>
+                <span class="en-text">Starts recording after the selected countdown time.</span></p>
+            </div>
+        </div>
+
+        <h2>⚙️ Settings Panel / 設定パネル（アイコン説明）</h2>
+        
+        <h3>🎥 ビデオ操作 & 表示 (Video & View)</h3>
+        <div class="feature-card">
+            <div class="feature-item">
+                <span class="label">Mirror Model</span>
+                <span class="feature-desc">【🪞 見本反転】お手本動画を左右反転します。</span>
+                <span class="en-text">Mirrors the reference video horizontally.</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">Fit Mode</span>
+                <span class="feature-desc">【[ ] 拡大切替】映像の表示形式を選択します。</span>
+                <p><strong>Cover:</strong> 画面いっぱいに表示（一部が切れる場合があります）<br>
+                <strong>Contain:</strong> 全体を表示（黒帯が表示される場合があります）<br>
+                <span class="en-text">Toggles between "Cover" (Fill screen) and "Contain" (Show entire video).</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Mirror Me</span>
+                <span class="feature-desc">【🤳 自分反転】カメラ映像（自分）を左右反転します。</span>
+                <p>鏡を見る感覚で直感的に練習することができます。<br>
+                <span class="en-text">Mirrors your own camera feed for a mirror-like experience.</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Grid</span>
+                <span class="feature-desc">【# グリッド表示】画面に補助線を表示します。</span>
+                <p>3x3 / 4x4 / 8x8 / 16x16 / センターライン から選択し、軸のブレを確認できます。<br>
+                <span class="en-text">Overlays guide lines such as 3x3, 4x4, 8x8, 16x16, or a Center line.</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Speed</span>
+                <span class="feature-desc">【x1.0 再生速度】お手本動画の再生速度を変更します。</span>
+                <p>0.5x 〜 1.5x の範囲で調整でき、スローでの詳細な動きの分析に便利です。<br>
+                <span class="en-text">Adjusts playback speed from 0.5x to 1.5x for slow-motion analysis.</span></p>
+            </div>
+        </div>
+
+        <h3>🎚 画質・遅延・タイマー (Quality, Delay & Timer)</h3>
+        <div class="feature-card">
+            <div class="feature-item">
+                <span class="label">Quality</span>
+                <span class="feature-desc">【💎 画質設定】保存される動画のビットレートを設定します。</span>
+                <ul>
+                    <li><strong>Low:</strong> 低画質（容量節約に最適）</li>
+                    <li><strong>Mid:</strong> 標準画質（<strong>推奨設定</strong>）</li>
+                    <li><strong>High:</strong> 高画質（最高品質での保存）</li>
+                </ul>
+                <span class="en-text">Sets the recording bitrate (Low, Mid, or High).</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">Delay</span>
+                <span class="feature-desc">【⏱ 遅延表示】カメラ映像を最大5秒まで遅らせて表示します。</span>
+                <p>スイングや演技をした直後に、画面を見て自分の動きをセルフチェックできます。<br>
+                <span class="en-text">Delays the camera feed up to 5 seconds for immediate self-review.</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Countdown</span>
+                <span class="feature-desc">【⏳ カウントダウン】各種動作の準備時間を設定します。</span>
+                <p>録画開始や待機戻りまでの準備時間（3s / 5s / 7s）を調整可能です。<br>
+                <span class="en-text">Sets the preparation time (3, 5, or 7 seconds) before recording or resetting.</span></p>
+            </div>
+        </div>
+
+        <h3>🎛 調整スライダー (Sliders)</h3>
+        <div class="feature-card">
+            <div class="feature-item">
+                <span class="label">Brightness</span>
+                <span class="feature-desc">【💡 明るさ調整】カメラ映像の明るさを調整します。</span>
+                <span class="en-text">Adjusts the brightness of your camera feed.</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">Ghost</span>
+                <span class="feature-desc">【👻 ゴースト機能】お手本をカメラ映像に半透明で重ねます。</span>
+                <p>お手本と自分のフォームを完全に重ね合わせることで、残像による細かな差異の比較が可能です。<br>
+                <span class="en-text">Overlays the reference video onto your camera feed with transparency for shadow comparison.</span></p>
+            </div>
+        </div>
+
+        <h3>🔁 録画・再生コントロール (Playback & Loop)</h3>
+        <div class="feature-card">
+            <div class="feature-item">
+                <span class="label">Back to Start</span>
+                <span class="feature-desc">【🔄 待機戻り】自動的に地点Aに戻ります。</span>
+                <p>カウントダウン後、自動的に設定した開始点(A)に戻り、再生・録画の準備を整えます。<br>
+                <span class="en-text">Automatically returns to Point A for playback or recording preparation.</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Point A / B</span>
+                <span class="feature-desc">【📍 A・B地点設定】区間を指定します。</span>
+                <p>繰り返し再生や録画を行いたい開始点(A)と終了点(B)を指定します。<br>
+                <span class="en-text">Sets the specific Start (A) and End (B) points for looping and recording.</span></p>
+            </div>
+            <div class="feature-item">
+                <span class="label">Play / Pause</span>
+                <span class="feature-desc">【▶️ 再生・停止】お手本動画のコントロールを行います。</span>
+                <span class="en-text">Toggles playback and pause for the model video.</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">Loop</span>
+                <span class="feature-desc">【🔁 ループ再生】A-B区間を繰り返し再生します。</span>
+                <span class="en-text">Repeatedly plays the section between point A and B.</span>
+            </div>
+        </div>
+
+        <h2>💾 保存について (Saving Video)</h2>
+        <div class="feature-card">
+            <p>1. 録画を停止すると、自動的に<strong>プレビュー画面（saveContainer）</strong>がポップアップします。<br>
+            2. 内容を確認し、<strong>【保存する (Save Video)】</strong>ボタンをクリックしてください。<br>
+            3. 動画ファイルはPCの<strong>「ダウンロード」フォルダ</strong>に自動的に保存されます。</p>
+            <span class="en-text">After recording, a preview window appears. Click "Save Video" to download it to your Downloads folder.</span>
+        </div>
+
+        <div class="important-box">
+            <strong>【重要】録画のコツ (Recording Tip)</strong>
+            <p>PC版では、💎アイコンを「High」に設定しても比較的安定して動作しますが、バックグラウンドでの負荷やお使いのPCスペックによっては録画中に映像がカクつくことがあります。<br>
+            <strong>もしカクつき（遅延）を感じた場合は、画質を「Mid」に設定して録画を行ってください。</strong></p>
+            <hr style="border-top: 1px solid #ffcc80;">
+            <span class="en-text" style="color: #6d4c41;">On PC, High quality is generally stable, but if the video lags due to hardware specs, please switch to "Mid" for smoother results.</span>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="../../index.html">Home</a>
+            <a href="../../kids/menu.html">Kids Menu</a>
+            <a href="../privacy.html">Privacy Policy</a>
+            <a href="../contact.html">Contact</a>
+        </div>
+        <p class="copyright">&copy; 2026 KuniFami Soft Studio All Rights Reserved.</p>
+    </footer>
+</div>
+
+</body>
+</html>
