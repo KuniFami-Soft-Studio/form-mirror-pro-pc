@@ -179,8 +179,8 @@
 
         <div class="donation-links">
             <a href="guide/FormMirrorProforPC‐User Manual.html" target="_blank">📖 Manual</a>
-            <a href="../form-mirror-pro-iphone/index.html" target="_blank">📱 iPhone版</a>
-            <a href="../form-mirror-pro-iphone/form_mirror_sync.html" target="_blank" style="background: #5856d6; border-color: #5856d6;">🔗 Sync & Pro Analysis（同期・プロ分析）for iPhone</a>
+            <a href="https://kunifami-soft-studio.github.io/form-mirror-pro-iphone/" target="_blank">📱 iPhone版</a>
+            <a href="https://kunifami-soft-studio.github.io/form-mirror-pro-iphone/form_mirror_sync.html" target="_blank" style="background: #5856d6; border-color: #5856d6;">🔗 Sync & Pro Analysis</a>
             <a href="https://ofuse.me/dfee538b" target="_blank">🇯🇵 OFUSEで応援</a>
             <a href="https://buymeacoffee.com/kunifami20w" target="_blank">🌎 Buy Me a Coffee</a>
         </div>
@@ -194,7 +194,7 @@
         </div>
         <footer style="margin-top: auto; padding: 20px 0; text-align: center; border-top: 1px solid #eee; width: 100%; max-width: 400px;">
             <div style="margin-bottom: 10px;">
-                <a href="contact.html" style="color: #999; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact / お問い合わせ</a>
+                <a href="contact.html" style="color: #999; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact/ お問い合わせ</a>
                 <a href="privacy.html" style="color: #999; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy / 規約</a>
             </div>
             <p style="color: #bbb; font-size: 10px;">&copy; 2026 KuniFami Soft Studio</p>
@@ -282,6 +282,11 @@
         const playPauseBtn = document.getElementById('playPauseBtn');
         const recordBtn = document.getElementById('recordBtn');
         const cdOverlay = document.getElementById('countdownOverlay');
+
+        // Audio Handling Variables
+        let audioCtx;
+        let audioDest;
+        let modelSource;
 
         // 状態管理
         let displayMode = 0;
@@ -427,7 +432,8 @@
             updateQualityLabel();
 
             try {
-                await navigator.mediaDevices.getUserMedia({ video: true });
+                // Request audio permission here as well
+                await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 videoDevices = devices.filter(d => d.kind === 'videoinput');
                 
@@ -435,7 +441,7 @@
                 showUI();
                 requestAnimationFrame(render);
             } catch (e) {
-                alert("Camera Error: " + e.message);
+                alert("Camera/Audio Error: " + e.message);
             }
         }
 
@@ -448,7 +454,8 @@
                     deviceId: videoDevices[currentDeviceIdx]?.deviceId ? { exact: videoDevices[currentDeviceIdx].deviceId } : undefined,
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
-                } 
+                },
+                audio: true // Add audio to constraints
             };
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             myCam.srcObject = stream;
@@ -663,14 +670,43 @@
             }, 1000);
         }
 
-        function executeRecording() {
+        async function executeRecording() {
+            // Audio setup
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioDest = audioCtx.createMediaStreamDestination();
+                
+                // Connect Model Video Audio
+                if (!modelSource) {
+                    modelSource = audioCtx.createMediaElementSource(modelVid);
+                    modelSource.connect(audioCtx.destination); // Speakers
+                    modelSource.connect(audioDest); // Recorder
+                }
+            }
+            if (audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
+
+            // Connect Mic Audio (create fresh source for current stream)
+            let micSource;
+            if (myCam.srcObject && myCam.srcObject.getAudioTracks().length > 0) {
+                micSource = audioCtx.createMediaStreamSource(myCam.srcObject);
+                micSource.connect(audioDest);
+            }
+
+            // Combine Streams
             recordedChunks = [];
             const stream = canvas.captureStream(60);
+            const combinedStream = new MediaStream([
+                ...stream.getVideoTracks(),
+                ...audioDest.stream.getAudioTracks()
+            ]);
+
             const types = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
             let selectedType = types.find(t => MediaRecorder.isTypeSupported(t)) || "";
             
             try {
-                mediaRecorder = new MediaRecorder(stream, { 
+                mediaRecorder = new MediaRecorder(combinedStream, { 
                     mimeType: selectedType, 
                     videoBitsPerSecond: qualityModes[qualityIdx].bps 
                 });
@@ -788,7 +824,6 @@
             timeDisplay.innerText = `${formatTime(modelVid.currentTime)} / ${formatTime(modelVid.duration || 0)}`;
         };
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5115190227060860" crossorigin="anonymous"></script>
     <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
 </body>
 </html>
